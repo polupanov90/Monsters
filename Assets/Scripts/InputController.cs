@@ -8,7 +8,7 @@ public class InputController : MonoBehaviour {
     [SerializeField] private float rotateSpreed = 2;
     
     private InputAction moveAction;
-    public Vector2 movementVector;
+    public Vector2 movementVector; 
     
     private void OnEnable() {
         inputActionAsset.FindActionMap("Player").Enable();
@@ -23,6 +23,6 @@ public class InputController : MonoBehaviour {
     }
 
     private void Update() {
-        movementVector = moveAction.ReadValue<Vector2>();
+        movementVector = moveAction.ReadValue<Vector2>().normalized;
     }
 }
