@@ -1,6 +1,5 @@
 ﻿**/Assembly-CSharp*.csproj
-**/Assembly-CSharp-Editor*.csproj
-
+**/Assembly-CSharp-Editor.*csproj
 .idea
 **/[Ll]ibrary/
 **/[Tt]emp/
