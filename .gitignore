@@ -9,3 +9,5 @@
 */Build
 **/Build
 /[Bb]iuld
+Assembly-CSharp.csproj
+Assembly-CSharp-Editor.csproj
