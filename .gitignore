@@ -1,4 +1,7 @@
-﻿.idea
+﻿**/Assembly-CSharp*.csproj
+**/Assembly-CSharp-Editor*.csproj
+
+.idea
 **/[Ll]ibrary/
 **/[Tt]emp/
 **/[Oo]bj/
@@ -9,5 +12,3 @@
 */Build
 **/Build
 /[Bb]iuld
-Assembly-CSharp.csproj
-Assembly-CSharp-Editor.csproj
