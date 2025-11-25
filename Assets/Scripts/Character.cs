@@ -2,8 +2,8 @@ using System;
 using UnityEngine;
 
 public class Character : MonoBehaviour {
-    protected float moveSpeed = 7;
-    protected float rotateSpeed = 12;
+    protected float moveSpeed = 12;
+    protected float rotateSpeed = 17;
     
     protected void Move(Vector2 moveVector) {
         Vector3 moveVector3 = transformVector3ToVector3(moveVector);
