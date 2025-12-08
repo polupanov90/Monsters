@@ -6,13 +6,13 @@ using Random = UnityEngine.Random;
 public class NeedController : MonoBehaviour {
     public static NeedController Instance { get; private set; }
      public NeedO[] needObjects;
-    private Child[] childs;
+    private ChildLegacy[] childs;
     private int needIndex;
     private int REPEAT_INTERVAL = 10;
     
     private void Awake() {
         Instance = this;
-        childs = FindObjectsOfType<Child>();
+        childs = FindObjectsOfType<ChildLegacy>();
         needIndex = needObjects.Length - 1;
         InvokeRepeating("AddNewNeed", REPEAT_INTERVAL, REPEAT_INTERVAL);
     }
@@ -22,10 +22,10 @@ public class NeedController : MonoBehaviour {
     }
 
 
-    private  Child[] GetChildsOnlyHasNeedType(NeedO _needO) {
-        Child[] onlyHasEmptyNeedSlotChilds = childs.Where((child) => child.HasEmptyNeedSlot()).ToArray();
+    private  ChildLegacy[] GetChildsOnlyHasNeedType(NeedO _needO) {
+        ChildLegacy[] onlyHasEmptyNeedSlotChilds = childs.Where((child) => child.HasEmptyNeedSlot()).ToArray();
         
-        Child[] onlyDontHasNeedTypeChilds = onlyHasEmptyNeedSlotChilds.Where((child) => !child.HasNeedType(_needO)).ToArray();
+        ChildLegacy[] onlyDontHasNeedTypeChilds = onlyHasEmptyNeedSlotChilds.Where((child) => !child.HasNeedType(_needO)).ToArray();
         
         Array.Sort(onlyDontHasNeedTypeChilds, (child1, child2) => {
             return child1.GetEmptyNeedSlotCount() < child2.GetEmptyNeedSlotCount() ? 1 : -1;
@@ -34,7 +34,7 @@ public class NeedController : MonoBehaviour {
     }
     private void AddNewNeed() {
         int initialIndex = needIndex;
-        Child[] sortedOnlyDontHasNeedTypeChilds = {};
+        ChildLegacy[] sortedOnlyDontHasNeedTypeChilds = {};
 
         int count = 0;
         

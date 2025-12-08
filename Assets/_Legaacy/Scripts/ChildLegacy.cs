@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.AI;
 
 
-public class Child : Unit {
+public class ChildLegacy : Unit {
     
     
     [SerializeField] private Transform[] targetList;

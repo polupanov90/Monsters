@@ -34,7 +34,7 @@ public class Player : Unit {
     private GameObject transferObject;
     private EatO transferEatO;
     private bool transferEatIsPrepared;
-    private Child transferChild;
+    private ChildLegacy transferChild;
 
     public Transform nearestChild;
     public GameObject transferHuitar;
@@ -117,7 +117,7 @@ public class Player : Unit {
         } else if (nearestChild && transferEatIsPrepared) {
             NeedEnum needType = transferEatO.eatType == EatEnum.One ? NeedEnum.EatOne :
                 transferEatO.eatType == EatEnum.Two ? NeedEnum.EatTwo : NeedEnum.EatThree;
-            Child child = nearestChild.gameObject.GetComponent<Child>();
+            ChildLegacy child = nearestChild.gameObject.GetComponent<ChildLegacy>();
             NeedO needO = Array.Find(NeedController.Instance.needObjects, (item) => item.type == needType);
             
             if (child.HasNeedType(needO)) {
@@ -136,7 +136,7 @@ public class Player : Unit {
                 transferChild.isTransfer = false;
             }
             transferChild = null;
-        } else if (nearestChild && !transferEatO && nearestChild.gameObject.TryGetComponent<Child>(out Child child) && !child.isSleep) {
+        } else if (nearestChild && !transferEatO && nearestChild.gameObject.TryGetComponent<ChildLegacy>(out ChildLegacy child) && !child.isSleep) {
             child.agent.ResetPath();
             child.isTransfer =  true;
             child.transform.SetParent(transferPoint);
@@ -179,7 +179,7 @@ public class Player : Unit {
     private void SetOverlapChildren() {
         Collider[] colliders = Physics.OverlapSphere(transform.position, RAYCAST_CHILDREN_RADIUS);
         Collider[] onlyChildren = colliders.Where((collider) => {
-            bool isChild = collider.gameObject.TryGetComponent<Child>(out Child child);
+            bool isChild = collider.gameObject.TryGetComponent<ChildLegacy>(out ChildLegacy child);
             return isChild;
         }).ToArray();
 
