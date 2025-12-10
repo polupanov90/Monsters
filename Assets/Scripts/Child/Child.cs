@@ -1,5 +1,6 @@
 using System;
 using JetBrains.Annotations;
+using UnityEditor.Analytics;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -11,10 +12,7 @@ public class Child : MonoBehaviour {
     private PointOfInterestMain lastPointOfInterestMain;
     private PointOfInterestAwait pointOfInterestAwait;
     private PointOfInterestUse pointOfInterestUse;
-    private NavMeshAgent agent;
-    
-    public bool pointInterestAwaitInvoked; 
-    public bool pointInterestUseInvoked; 
+    public NavMeshAgent agent;
     
     private void Awake() {
         InitiateNavMeshAgent();
@@ -24,17 +22,14 @@ public class Child : MonoBehaviour {
     }
     private void Update() {
         StopMove();
-        if (pointInterestAwaitInvoked) {
-            TryGoToUsePointFromAwaitPoint();
-        }
     }
 
     private void StopMove() {
         if (agent.hasPath && agent.remainingDistance < 0.1f && pointOfInterestAwait) {
             BeginAwaitPointToInterest();
         }
-        if (agent.hasPath && agent.remainingDistance < 0.1f && pointOfInterestUse) {
-            BeginUsePointToInterest();
+        if (agent.hasPath && agent.remainingDistance < 0.1f && pointOfInterestUse && pointOfInterestUse.status == PointOfInterestUsedStatusEnum.Employed) {
+           ReadyUsePointToInterest();
         }
     }
     
@@ -91,26 +86,28 @@ public class Child : MonoBehaviour {
         _pointOfInterestMain = null;
         return false;
     }
-
-    private void TryGoToUsePointFromAwaitPoint() {
-        if (pointOfInterestMain && pointOfInterestMain.TryGetEmptyUsePoint(out PointOfInterestUse _pointOfInterestUse) && pointOfInterestMain.CheckFirstPlaceInLoop(this)) {
-            pointOfInterestUse = _pointOfInterestUse;
-            _pointOfInterestUse.StartUsing(this);
-            CancelInvoke(nameof(EndAwaitPointToInterestAndSomethingToDo));   
+    
+    private void ChangePointOfInterestLoop(object sender, LoopChangeArguments loopChangeArguments) {
+        if (loopChangeArguments.child == this) {
+            pointOfInterestUse = loopChangeArguments.pointOfInterestUse;
+            pointOfInterestUse.EmployUsing(this);
+            pointOfInterestMain.OutInLine(this);
+            pointOfInterestMain.OnLoopChange -= ChangePointOfInterestLoop;  
+            CancelInvoke(nameof(EndAwaitPointToInterestAndSomethingToDo));
             EndAwaitPointToInterest();
-            SetDestination(_pointOfInterestUse.transform.position);
+            SetDestination(pointOfInterestUse.transform.position);
+            
         }
     }
-    
+
     private void BeginAwaitPointToInterest() {
         ClearDestination();
         if (pointOfInterestMain) {
             pointOfInterestMain.GetInLine(this);
+            pointOfInterestMain.OnLoopChange += ChangePointOfInterestLoop;
         }
-        if (pointInterestAwaitInvoked) {
-            CancelInvoke(nameof(EndAwaitPointToInterestAndSomethingToDo));    
-        }
-        pointInterestAwaitInvoked = true;
+        
+        CancelInvoke(nameof(EndAwaitPointToInterestAndSomethingToDo));
         Invoke(nameof(EndAwaitPointToInterestAndSomethingToDo), awaitTime);
     }
 
@@ -121,33 +118,58 @@ public class Child : MonoBehaviour {
         SomethingToDo();
     }
     private void EndAwaitPointToInterest() {
-        pointInterestAwaitInvoked = false;
-        pointOfInterestAwait.StopUsing();
-        pointOfInterestMain.OutInLine(this);
-        lastPointOfInterestMain = pointOfInterestMain;
-        pointOfInterestAwait = null;
+        if (pointOfInterestAwait) {
+            pointOfInterestAwait.StopUsing();
+            pointOfInterestAwait = null;
+        }
+
+        if (pointOfInterestMain) {
+            pointOfInterestMain.OutInLine(this);
+            lastPointOfInterestMain = pointOfInterestMain;
+        }
     }
 
-    private void BeginUsePointToInterest() {
+    
+
+    private void ReadyUsePointToInterest() {
         ClearDestination();
-        if (pointInterestUseInvoked) {
-            CancelInvoke(nameof(EndUsePointToInterestAndSomethingToDo));    
+        if (pointOfInterestMain && pointOfInterestUse) {
+            pointOfInterestUse.ReadyUsing(this);
+            pointOfInterestMain.OnStartUse += UsePointToInterestStartHandler;
         }
+    }
+    
+    private void UsePointToInterestStartHandler(object sender, EventArgs args) {
         if (pointOfInterestUse) {
-            pointInterestUseInvoked = true;
-            Invoke(nameof(EndUsePointToInterestAndSomethingToDo), pointOfInterestMain.useTime);
+            ClearDestination();
+            pointOfInterestMain.OnStartUse -= UsePointToInterestStartHandler;
+            pointOfInterestUse.StartUsing(this);
+            if (pointOfInterestMain.startUseIfAllUsePointsIsUsed) {
+                pointOfInterestMain.OnStopUse += UsePointToInterestStopHandler;
+            } else {
+                CancelInvoke(nameof(UsePointToInterestStopAndSomethingToDo));
+                Invoke(nameof(UsePointToInterestStopAndSomethingToDo), pointOfInterestMain.useTime);
+            }
         }
     }
 
-    private void EndUsePointToInterestAndSomethingToDo() {
-        EndUsePointToInterest();
+    private void UsePointToInterestStopHandler(object sender, EventArgs args) {
+        pointOfInterestMain.OnStopUse -= UsePointToInterestStopHandler;
+        UsePointToInterestStop();
         SomethingToDo();
     }
 
-    private void EndUsePointToInterest() {
-        pointInterestUseInvoked = false;
-        pointOfInterestUse.StopUsing();
-        pointOfInterestUse = null;
-        pointOfInterestMain = null;
+    private void UsePointToInterestStopAndSomethingToDo() {
+        UsePointToInterestStop();
+        SomethingToDo();
     }
+    private void UsePointToInterestStop() {
+        if (pointOfInterestUse) {
+            pointOfInterestUse.StopUsing();
+            pointOfInterestUse = null;
+            pointOfInterestMain = null;
+        }
+    }
+    
 }
+ 
