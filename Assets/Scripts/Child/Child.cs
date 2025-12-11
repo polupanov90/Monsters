@@ -3,16 +3,21 @@ using JetBrains.Annotations;
 using UnityEditor.Analytics;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.UIElements;
 
 public class Child : MonoBehaviour {
     [SerializeField] private PointOfInterestMain[] pointsOfInterest;
+    [SerializeField] private Animator animator;
     [SerializeField] private float awaitTime = 4f;
+    
     
     private PointOfInterestMain pointOfInterestMain;
     private PointOfInterestMain lastPointOfInterestMain;
     private PointOfInterestAwait pointOfInterestAwait;
     private PointOfInterestUse pointOfInterestUse;
     public NavMeshAgent agent;
+
+    public bool isSit;
     
     private void Awake() {
         InitiateNavMeshAgent();
@@ -22,6 +27,37 @@ public class Child : MonoBehaviour {
     }
     private void Update() {
         StopMove();
+        Animate();
+        RotateToPointOfInterestMain();
+    }
+
+    private void RotateToPointOfInterestMain() {
+        if (pointOfInterestUse && pointOfInterestUse.usedChild == this) {
+            Rotate(pointOfInterestMain.lookPoint.transform.position);
+        }
+    }
+
+    private void Rotate(Vector3 rotateTarget) {
+        Vector3 direction = rotateTarget - transform.position;
+        direction.y = 0;
+        if (direction.magnitude > 0.01f) {
+            Quaternion targetRotation = Quaternion.LookRotation(direction);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 10 * Time.deltaTime);
+        }
+    }
+
+    private void Animate() {
+        if (agent.hasPath) {
+            animator.SetBool("isWalk", true);    
+        } else {
+            animator.SetBool("isWalk", false);
+        }
+
+        if (isSit) {
+            animator.SetBool("isSit", true);
+        } else {
+            animator.SetBool("isSit", false);
+        }
     }
 
     private void StopMove() {

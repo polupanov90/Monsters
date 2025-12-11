@@ -17,6 +17,7 @@ public class LoopChangeArguments {
 public class PointOfInterestMain : MonoBehaviour {
     public PointOfInterestUse[] usePoints;
     public PointOfInterestAwait[] awaitPoints;
+    public LoockPoint lookPoint;
     public List<Child> childLoop;
     public bool startUseIfAllUsePointsIsUsed;
     public int useTime = 4;
