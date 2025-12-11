@@ -1,9 +1,14 @@
 fileFormatVersion: 2
-guid: 478db9e8267c1614a957943e35d147b5
+guid: 8c011de613f31ae469480394717c9b38
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: toy_bear_material
+    second: {fileID: 2100000, guid: c175a3578e8fe0c42b106d7a248c4548, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
