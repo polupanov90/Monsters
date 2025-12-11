@@ -1,9 +1,19 @@
 fileFormatVersion: 2
-guid: 478db9e8267c1614a957943e35d147b5
+guid: 9faefa40167e74540be072a3dfbf80ee
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: well_main_material
+    second: {fileID: 2100000, guid: e7a4d4ec2cc222e4fa583c39f6602ad9, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: well_water
+    second: {fileID: 2100000, guid: cc2a58685bf5dc04ba2cdcbce03dc31b, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
