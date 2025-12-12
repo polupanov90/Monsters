@@ -11,13 +11,15 @@ public class Child : MonoBehaviour {
     [SerializeField] private float awaitTime = 4f;
     
     
-    private PointOfInterestMain pointOfInterestMain;
+    public PointOfInterestMain pointOfInterestMain;
     private PointOfInterestMain lastPointOfInterestMain;
     private PointOfInterestAwait pointOfInterestAwait;
     private PointOfInterestUse pointOfInterestUse;
     public NavMeshAgent agent;
-
+    
     public bool isSit;
+    public bool isJump;
+    public bool isSitGame;
     
     private void Awake() {
         InitiateNavMeshAgent();
@@ -32,7 +34,7 @@ public class Child : MonoBehaviour {
     }
 
     private void RotateToPointOfInterestMain() {
-        if (pointOfInterestUse && pointOfInterestUse.usedChild == this) {
+        if ((pointOfInterestUse && pointOfInterestUse.usedChild == this) || (pointOfInterestAwait && !agent.hasPath)) {
             Rotate(pointOfInterestMain.lookPoint.transform.position);
         }
     }
@@ -48,15 +50,24 @@ public class Child : MonoBehaviour {
 
     private void Animate() {
         if (agent.hasPath) {
-            animator.SetBool("isWalk", true);    
+            animator.SetBool("isWalk", true);   
         } else {
             animator.SetBool("isWalk", false);
         }
-
         if (isSit) {
             animator.SetBool("isSit", true);
         } else {
             animator.SetBool("isSit", false);
+        }
+        if (isJump) {
+            animator.SetBool("isJump", true);
+        } else {
+            animator.SetBool("isJump", false);
+        }
+        if (isSitGame) {
+            animator.SetBool("isSitGame", true);
+        } else {
+            animator.SetBool("isSitGame", false);
         }
     }
 
